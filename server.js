@@ -1,10 +1,9 @@
 const express = 'express';
-const dotenv = 'dotenv';
 const bodyParser = "body-parser";
 const axios = "axios";
 const cors = 'cors';
-dotenv.config();
 const { Configuration, OpenAIApi } = "openai";
+require("dotenv").config();
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
