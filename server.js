@@ -1,11 +1,12 @@
-const express = 'express';
-const dotenv = 'dotenv';
-const bodyParser = "body-parser";
-const axios = "axios";
-const cors = 'cors';
-const { Configuration, OpenAIApi } = "openai";
+import express from 'express';
+import * as dotenv from 'dotenv';
+import bodyParser from "body-parser";
+import axios from "axios";
+import cors from 'cors';
+import { Configuration, OpenAIApi } from "openai";
+dotenv.config();
 
-const configuration = new Configuration({
+import configuration from new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
