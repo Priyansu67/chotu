@@ -25,12 +25,10 @@ app.use(bodyParser.json());
 const access_token = process.env.ACCESS_TOKEN;
 const my_token = process.env.MY_TOKEN;
 
+
+
+
 app.get("/", (req, res) => {
-    res.send("Hey, I am working");
-});
-
-
-app.get("/webhook", (req, res) => {
   let mode = req.query["hub.mode"];
   let challenge = req.query["hub.challenge"];
   let token = req.query["hub.verify_token"];
@@ -38,21 +36,22 @@ app.get("/webhook", (req, res) => {
   if (mode && token) {
     if (mode === "subscribe" && token === my_token) {
       res.status(200).send(challenge);
+      res.send("Hey, Whatsapp API is working");
     } else {
       res.sendStatus(403);
     }
+  }else{
+    res.send("Hey, Whatsapp API is not working");
   }
 });
 
-app.post("/webhook",async (req, res) => {
+app.post("/",async (req, res) => {
   let body = req.body;
 
   console.log(body.json());
 
   if (body.object) {
     if (
-      body.entry &&
-      body.entry[0].changes &&
       body.entry[0].changes[0].value.message &&
       body.entry[0].changes[0].value.message[0]
     ) {
