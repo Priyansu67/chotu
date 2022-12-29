@@ -17,14 +17,15 @@ async function botMessage(prompt) {
   const completion = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: prompt,
-    maxTokens: 50000,
-    temperature: 0.5,
+    maxTokens: 2048,
+    temperature: 0.7,
     top_p: 1,
     presence_penalty: 0,
     frequency_penalty: 0,
   });
-
-  return completion.data.choices[0].text;
+  console.log(firstResponse(completion.data.choices[0].text));
+  let length = completion.data.choices.length
+  return completion.data.choices[length-1].text;
 }
 
 //Whatsapp Part
@@ -78,7 +79,7 @@ app.post("/webhook", async (req, res) => {
         axios({
           method: "POST",
           url:
-            "https://graph.facebook.com/v12.0/" +
+            "https://graph.facebook.com/v15.0/" +
             phone_number_id +
             "/messages?access_token=" +
             access_token,
@@ -89,7 +90,7 @@ app.post("/webhook", async (req, res) => {
           },
           headers: { "Content-Type": "application/json" },
         })
-      );
+      ).catch((err) => console.log(err));
     }
     res.sendStatus(200);
   } else {
