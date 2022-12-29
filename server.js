@@ -1,8 +1,9 @@
-const express = 'express';
-const bodyParser = "body-parser";
-const axios = "axios";
-const cors = 'cors';
-const { Configuration, OpenAIApi } = "openai";
+const { Configuration } = require("openai");
+const { OpenAIApi } = require("openai");
+const express = required('express');
+const bodyParser = required("body-parser");
+const axios = required("axios");
+const cors = required('cors');
 
 const OPENAI_API_KEY='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'
 const ACCESS_TOKEN='EAAMz1TbWkowBAOcnxdKgay1gSGqq26YQUOI0oZAwccrewlBIANwaSXGCdeAa7E6uTmYbCfHB9qMQZCzk4UjWLaItgbZAIsVSNyK76R14m0wwSLjvvxNWdZB3jWHl83g7f1YbhYlZCpZBuQu1eD84HXamp5tHKeyK8qzxZBlcfuGfyQZBduyoU3jUGMW6OybDbB55cZCkZA60aiZCucDzZCJKxbuzmlJN7GUlCVwZD'
