@@ -88,7 +88,7 @@ app.post("/webhook", async (req, res) => {
             data: {
               messaging_product: "whatsapp",
               to: from,
-              text: { body: "Chotu: " + data },
+              text: { body: data },
             },
             headers: { "Content-Type": "application/json" },
           });
@@ -97,7 +97,6 @@ app.post("/webhook", async (req, res) => {
     }
     res.sendStatus(200);
   } else {
-    // Return a '404 Not Found' if event is not from a WhatsApp API
     res.sendStatus(404);
   }
 });
