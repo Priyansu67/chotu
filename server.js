@@ -73,6 +73,8 @@ app.post("/webhook",async (req, res) => {
             frequency_penalty: 0.6,
             presence_penalty: 0.3,
           });
+
+          console.log(response.data.choices[0].text)
         
     } catch (error) {
         console.log(error);
@@ -81,7 +83,7 @@ app.post("/webhook",async (req, res) => {
 
       axios({
         method: "post",
-        url: `https://graph.facebook.com/v15.0/${phone_number_id}/messages?access_token=${access_token}`,
+        url: `https://graph.facebook.com/v15.0/112516221717107/messages?access_token=${access_token}`,
         data: {
           messaging_product: "whatsapp",
           to: from,
