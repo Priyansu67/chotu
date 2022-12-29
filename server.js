@@ -29,19 +29,19 @@ const my_token = process.env.MY_TOKEN;
 
 
 app.get("/", (req, res) => {
-  let mode = req.query["hub.mode"];
-  let challenge = req.query["hub.challenge"];
-  let token = req.query["hub.verify_token"];
+  const { mode, challenge, verify_token: token } = req.query;
 
   if (mode && token) {
-    if (mode === "subscribe" && token === my_token) {
+    if (mode === 'subscribe' && token === myToken) {
       res.status(200).send(challenge);
-      res.send("Hey, Whatsapp API is working");
+      console.log('Webhook subscription verified');
     } else {
       res.sendStatus(403);
+      console.error('Invalid webhook subscription');
     }
-  }else{
-    res.send("Hey, Whatsapp API is not working");
+  } else {
+    res.sendStatus(400);
+    console.error('Missing webhook parameters');
   }
 });
 
