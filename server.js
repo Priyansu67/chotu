@@ -57,7 +57,7 @@ app.post("/webhook",async (req, res) => {
       body.entry[0].changes[0].value.message[0]
     ) {
       let phone_number_id =
-        body.entry[0].changes[0].value.metadata.phone_number_id;
+        process.env.MY_ID;
       let from = body.entry[0].changes[0].value.messages[0].from;
       let message = body.entry[0].changes[0].value.messages[0].text.body;
       let response;
@@ -83,22 +83,24 @@ app.post("/webhook",async (req, res) => {
 
       axios({
         method: "post",
-        url: `https://graph.facebook.com/v15.0/112516221717107/messages?access_token=${access_token}`,
+        url: `https://graph.facebook.com/v15.0/${phone_number_id}/messages?access_token=${access_token}`,
+        headers: {
+          "Content-Type": "application/json",
+        },
         data: {
           messaging_product: "whatsapp",
           to: from,
           text: {
-            body: response.data.choices[0].text,
+            body: `${response.data.choices[0].text}`,
           },
         },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      res.sendStatus(200);
-    } else {
-      res.sendStatus(404);
+        
+      }).then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });  
     }
   }
 });
