@@ -1,15 +1,15 @@
-import express from 'express';
-import bodyParser from "body-parser";
-import axios from "axios";
-import cors from 'cors';
-import { Configuration, OpenAIApi } from "openai";
+const express = 'express';
+const bodyParser = "body-parser";
+const axios = "axios";
+const cors = 'cors';
+const { Configuration, OpenAIApi } = "openai";
 
 const OPENAI_API_KEY='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'
 const ACCESS_TOKEN='EAAMz1TbWkowBAOcnxdKgay1gSGqq26YQUOI0oZAwccrewlBIANwaSXGCdeAa7E6uTmYbCfHB9qMQZCzk4UjWLaItgbZAIsVSNyK76R14m0wwSLjvvxNWdZB3jWHl83g7f1YbhYlZCpZBuQu1eD84HXamp5tHKeyK8qzxZBlcfuGfyQZBduyoU3jUGMW6OybDbB55cZCkZA60aiZCucDzZCJKxbuzmlJN7GUlCVwZD'
 const MY_TOKEN='priyansuc67'
 
 
-import configuration from new Configuration({
+const configuration = new Configuration({
   apiKey: OPENAI_API_KEY,
 });
 
