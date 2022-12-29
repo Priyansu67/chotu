@@ -24,8 +24,7 @@ async function botMessage(prompt) {
     frequency_penalty: 0,
   });
   console.log(firstResponse(completion.data.choices[0].text));
-  let length = completion.data.choices.length
-  return completion.data.choices[length-1].text;
+  return completion.data.choices[0].text;
 }
 
 //Whatsapp Part
@@ -75,22 +74,26 @@ app.post("/webhook", async (req, res) => {
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
       let from = req.body.entry[0].changes[0].value.messages[0].from;
       let prompt = req.body.entry[0].changes[0].value.messages[0].text.body;
-      await botMessage(prompt).then((data) =>
-        axios({
-          method: "POST",
-          url:
-            "https://graph.facebook.com/v15.0/" +
-            phone_number_id +
-            "/messages?access_token=" +
-            access_token,
-          data: {
-            messaging_product: "whatsapp",
-            to: from,
-            text: { body: "Chotu: " + data },
-          },
-          headers: { "Content-Type": "application/json" },
+      Promise.resolve(botMessage(prompt)).then((data) => console.log(data));
+      await botMessage(prompt)
+        .then((data) => {
+          console.log(data);
+          axios({
+            method: "POST",
+            url:
+              "https://graph.facebook.com/v15.0/" +
+              phone_number_id +
+              "/messages?access_token=" +
+              access_token,
+            data: {
+              messaging_product: "whatsapp",
+              to: from,
+              text: { body: "Chotu: " + data },
+            },
+            headers: { "Content-Type": "application/json" },
+          });
         })
-      ).catch((err) => console.log(err));
+        .catch((err) => console.log(err));
     }
     res.sendStatus(200);
   } else {
