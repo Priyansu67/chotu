@@ -62,6 +62,10 @@ app.post("/webhook",async (req, res) => {
       let message = body.entry[0].changes[0].value.messages[0].text.body;
       let response;
 
+      console.log(phone_number_id);
+      console.log(from);
+      console.log(message);
+
       try {
         const prompt = message;
         response = await openai.createCompletion({
@@ -90,6 +94,7 @@ app.post("/webhook",async (req, res) => {
         data: {
           messaging_product: "whatsapp",
           to: from,
+          type: "text",
           text: {
             body: `${response.data.choices[0].text}`,
           },
