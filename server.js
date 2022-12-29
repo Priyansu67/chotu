@@ -1,13 +1,16 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import axios from "axios";
 import cors from 'cors';
 import { Configuration, OpenAIApi } from "openai";
-dotenv.config();
+
+const OPENAI_API_KEY='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'
+const ACCESS_TOKEN='EAAMz1TbWkowBAOcnxdKgay1gSGqq26YQUOI0oZAwccrewlBIANwaSXGCdeAa7E6uTmYbCfHB9qMQZCzk4UjWLaItgbZAIsVSNyK76R14m0wwSLjvvxNWdZB3jWHl83g7f1YbhYlZCpZBuQu1eD84HXamp5tHKeyK8qzxZBlcfuGfyQZBduyoU3jUGMW6OybDbB55cZCkZA60aiZCucDzZCJKxbuzmlJN7GUlCVwZD'
+const MY_TOKEN='priyansuc67'
+
 
 import configuration from new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
@@ -20,8 +23,8 @@ app.use(express.json());
 
 app.use(bodyParser.json());
 
-const access_token = process.env.ACCESS_TOKEN;
-const my_token = process.env.MY_TOKEN;
+const access_token = ACCESS_TOKEN;
+const my_token = MY_TOKEN;
 
 app.get("/", (req, res) => {
     res.send("Hey, I am working");
@@ -99,4 +102,4 @@ app.post("/webhook",async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT, () => console.log("webhook is listening"));
+app.listen(3000, () => console.log("webhook is listening"));
