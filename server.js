@@ -17,7 +17,7 @@ async function botMessage(prompt) {
   const completion = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: prompt,
-    maxTokens: 2048,
+    max_tokens: 2048,
     temperature: 0.7,
     top_p: 1,
     presence_penalty: 0,
@@ -36,7 +36,7 @@ app.use(bodyParser.json());
 const access_token = process.env.ACCESS_TOKEN;
 const myToken = process.env.MY_TOKEN;
 
-app.get("/", function (req, res) {
+app.get("/", async function (req, res) {
   res.send(
     'This is a WhatsApp bot. Please go to <a href="https://developers.facebook.com/docs/whatsapp/api/messages">https://developers.facebook.com/docs/whatsapp/api/messages</a> to learn more about the WhatsApp API.'
   );
@@ -75,10 +75,9 @@ app.post("/webhook", async (req, res) => {
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
       let from = req.body.entry[0].changes[0].value.messages[0].from;
       let prompt = req.body.entry[0].changes[0].value.messages[0].text.body;
-      Promise.resolve(botMessage(prompt)).then((data) => console.log(data));
       await botMessage(prompt)
         .then((data) => {
-          console.log(data);
+          console.log("Message by Bot" + data);
           axios({
             method: "POST",
             url:
