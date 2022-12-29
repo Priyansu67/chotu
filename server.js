@@ -23,7 +23,8 @@ async function botMessage(prompt) {
     presence_penalty: 0,
     frequency_penalty: 0,
   });
-  console.log(firstResponse(completion.data.choices[0].text));
+  
+  console.log(JSON.stringify(completion.data, null, 1));
   return completion.data.choices[0].text;
 }
 
