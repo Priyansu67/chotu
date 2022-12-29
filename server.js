@@ -13,21 +13,19 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-
 async function botMessage(prompt) {
-const completion = await  openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
-        maxTokens: 50000,
-        temperature: 0.5,
-        top_p: 1,
-        presence_penalty: 0,
-        frequency_penalty: 0,
-});
+  const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: prompt,
+    maxTokens: 50000,
+    temperature: 0.5,
+    top_p: 1,
+    presence_penalty: 0,
+    frequency_penalty: 0,
+  });
 
-return completion.data.choices[0].text;
-
-};
+  return completion.data.choices[0].text;
+}
 
 //Whatsapp Part
 
@@ -64,7 +62,6 @@ app.get("/webhook", (req, res) => {
 app.post("/webhook", async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
-  // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
   if (req.body.object) {
     if (
       req.body.entry &&
@@ -75,30 +72,30 @@ app.post("/webhook", async (req, res) => {
     ) {
       let phone_number_id =
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
-      let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
+      let from = req.body.entry[0].changes[0].value.messages[0].from;
       let prompt = req.body.entry[0].changes[0].value.messages[0].text.body;
-      let botMsg = await botMessage(prompt); // extract the message text from the webhook payload
-      axios({
-        method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-        url:
-          "https://graph.facebook.com/v12.0/" +
-          phone_number_id +
-          "/messages?access_token=" +
-          access_token,
-        data: {
-          messaging_product: "whatsapp",
-          to: from,
-          text: { body: "Chotu: " + botMsg },
-        },
-        headers: { "Content-Type": "application/json" },
-      });
+      await botMessage(prompt).then((data) =>
+        axios({
+          method: "POST",
+          url:
+            "https://graph.facebook.com/v12.0/" +
+            phone_number_id +
+            "/messages?access_token=" +
+            access_token,
+          data: {
+            messaging_product: "whatsapp",
+            to: from,
+            text: { body: "Chotu: " + data },
+          },
+          headers: { "Content-Type": "application/json" },
+        })
+      );
     }
     res.sendStatus(200);
   } else {
     // Return a '404 Not Found' if event is not from a WhatsApp API
     res.sendStatus(404);
   }
-
 });
 
 app.listen(5000 || process.env.PORT, () =>
