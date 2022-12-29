@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 const access_token = process.env.ACCESS_TOKEN;
-const my_token = process.env.MY_TOKEN;
+const myToken = process.env.MY_TOKEN;
 
 
 
