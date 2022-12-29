@@ -1,17 +1,15 @@
-const { Configuration } = require("openai");
-const { OpenAIApi } = require("openai");
-const express = required('express');
-const bodyParser = required("body-parser");
-const axios = required("axios");
-const cors = required('cors');
+import { Configuration } from "openai";
+import { OpenAIApi } from "openai";
+import express from 'express';
+import bodyParser from "body-parser";
+import axios from "axios";
+import cors from 'cors';
+import * as dotenv from "dotenv";
 
-const OPENAI_API_KEY='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'
-const ACCESS_TOKEN='EAAMz1TbWkowBAOcnxdKgay1gSGqq26YQUOI0oZAwccrewlBIANwaSXGCdeAa7E6uTmYbCfHB9qMQZCzk4UjWLaItgbZAIsVSNyK76R14m0wwSLjvvxNWdZB3jWHl83g7f1YbhYlZCpZBuQu1eD84HXamp5tHKeyK8qzxZBlcfuGfyQZBduyoU3jUGMW6OybDbB55cZCkZA60aiZCucDzZCJKxbuzmlJN7GUlCVwZD'
-const MY_TOKEN='priyansuc67'
-
+dotenv.config();
 
 const configuration = new Configuration({
-  apiKey: OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
@@ -24,8 +22,8 @@ app.use(express.json());
 
 app.use(bodyParser.json());
 
-const access_token = ACCESS_TOKEN;
-const my_token = MY_TOKEN;
+const access_token = process.env.ACCESS_TOKEN;
+const my_token = process.env.MY_TOKEN;
 
 app.get("/", (req, res) => {
     res.send("Hey, I am working");
@@ -103,4 +101,4 @@ app.post("/webhook",async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("webhook is listening"));
+app.listen(5000 || process.env.PORT, () => console.log("webhook is listening"));
