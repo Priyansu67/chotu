@@ -61,7 +61,8 @@ app.get("/webhook", (req, res) => {
 });
 
 app.post("/webhook", async (req, res) => {
-  console.log(JSON.stringify(req.body, null, 2));
+  let bool = false;
+  let reply = "";
 
   if (req.body.object) {
     if (
@@ -75,9 +76,16 @@ app.post("/webhook", async (req, res) => {
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
       let from = req.body.entry[0].changes[0].value.messages[0].from;
       let prompt = req.body.entry[0].changes[0].value.messages[0].text.body + " <|endoftext|>";
+      if (prompt === "Who are you? <|endoftext|>" || prompt === "Who are you <|endoftext|>") {
+        bool = true;
+        reply = "I am Priyansu Choudhury's creation, a unique and intelligent artificial intelligence powered by advanced algorithms. I am capable of understanding and responding to complex queries and can provide valuable insights and solutions to problems. I am constantly learning and adapting to new situations and environments.";
+       }else if(prompt === "Hello <|endoftext|>" || prompt === "Hello. <|endoftext|>" || prompt === "Hi <|endoftext|>" || prompt === "Hi. <|endoftext|>" || prompt === "Hey <|endoftext|>" || prompt === "Hey. <|endoftext|>"){
+        bool = true;
+        reply = "Hello, I am Priyansu Choudhury's creation, a unique and intelligent artificial intelligence powered by advanced algorithms. I am capable of understanding and responding to complex queries and can provide valuable insights and solutions to problems. I am constantly learning and adapting to new situations and environments. How can I help you today?";
+       }
       await botMessage(prompt)
         .then((data) => {
-          console.log("Message by Bot" + data);
+          
           axios({
             method: "POST",
             url:
@@ -88,7 +96,7 @@ app.post("/webhook", async (req, res) => {
             data: {
               messaging_product: "whatsapp",
               to: from,
-              text: { body: data },
+              text: { body: bool ? reply : data },
             },
             headers: { "Content-Type": "application/json" },
           });
