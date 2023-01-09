@@ -74,7 +74,7 @@ app.post("/webhook", async (req, res) => {
       let phone_number_id =
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
       let from = req.body.entry[0].changes[0].value.messages[0].from;
-      let prompt = req.body.entry[0].changes[0].value.messages[0].text.body;
+      let prompt = req.body.entry[0].changes[0].value.messages[0].text.body + " <|endoftext|>";
       await botMessage(prompt)
         .then((data) => {
           console.log("Message by Bot" + data);
