@@ -36,12 +36,6 @@ app.use(bodyParser.json());
 const access_token = process.env.ACCESS_TOKEN;
 const myToken = process.env.MY_TOKEN;
 
-app.get("/", async function (req, res) {
-  res.send(
-    'This is a WhatsApp bot. Please go to <a href="https://developers.facebook.com/docs/whatsapp/api/messages">https://developers.facebook.com/docs/whatsapp/api/messages</a> to learn more about the WhatsApp API.'
-  );
-});
-
 app.get("/webhook", (req, res) => {
   let mode = req.query["hub.mode"];
   let token = req.query["hub.verify_token"];
@@ -113,6 +107,12 @@ app.post("/webhook", async (req, res) => {
   } else {
     res.sendStatus(404);
   }
+});
+
+app.use(express.static("public"));
+
+app.get("^/$", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist/index.html"));
 });
 
 app.listen(5000 || process.env.PORT, () =>
