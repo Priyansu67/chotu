@@ -112,6 +112,7 @@ const getResponse = async (prompt, from) => {
   } else {
     if (conversation.transfer !== true) {
       conversation.conversation.push({ role: "user", content: prompt }); // First push the user message
+      console.log(conversation.conversation);
       const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: conversation.conversation,
@@ -122,6 +123,7 @@ const getResponse = async (prompt, from) => {
           response.data.choices[0].message.content.includes(keyword)
         ) // Check if the response contains any of the keywords
       ) {
+        conversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
         conversation.transfer = true; // Set the transfer flag to true
         await conversation.save(); // Save the conversation
       } else {
