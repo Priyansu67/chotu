@@ -122,11 +122,15 @@ const getResponse = async (prompt, from) => {
   } else {
     if (conversation.transfer !== true) {
       conversation.conversation.push({ role: "user", content: prompt }); // First push the user message
-      console.log(conversation.conversation);
+      // Remove the _id and other fields from the conversation array
+      const messagesArray = conversation.conversation.map(
+        ({ _id, role, content }) => ({ role, content })
+        );
+        console.log(messagesArray);
       const response = await openai
         .createChatCompletion({
           model: "gpt-3.5-turbo",
-          messages: conversation.conversation.map(({ _id, ...rest }) => rest),
+          messages: messagesArray,
         })
         .catch((error) => {
           if (error.response) {
