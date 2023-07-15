@@ -97,26 +97,46 @@ const getResponse = async (prompt, from) => {
         },
       ],
     }); // Create a new conversation
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        ...initialMessage,
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    }); // Get the response from GPT-3
+    const response = await openai
+      .createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [
+          ...initialMessage,
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+        } else {
+          console.log(error.message);
+        }
+      });
+    // Get the response from GPT-3
     newConversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
     await newConversation.save(); // Save the conversation
   } else {
     if (conversation.transfer !== true) {
       conversation.conversation.push({ role: "user", content: prompt }); // First push the user message
       console.log(conversation.conversation);
-      const response = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: conversation.conversation,
-      }); // Get the response from GPT-3
+      const response = await openai
+        .createChatCompletion({
+          model: "gpt-3.5-turbo",
+          messages: conversation.conversation,
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error.response.status);
+            console.log(error.response.data);
+          } else {
+            console.log(error.message);
+          }
+        });
+      // Get the response from GPT-3
       if (
         response.data.choices[0].message.role === "assistant" &&
         keywords.some((keyword) =>
