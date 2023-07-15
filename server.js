@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const connectDB = require("./connection/connection.js");
-const  Conversation = require("./models/userConversationSchema.js");
+const Conversation = require("./models/userConversationSchema.js");
 connectDB();
 
 const access_token = process.env.ACCESS_TOKEN;
@@ -88,7 +88,7 @@ const getResponse = async (prompt, from) => {
   const conversation = await Conversation.findOne({ from });
   if (!conversation) {
     const newConversation = new Conversation({
-      from,
+      phonenumber: from,
       conversation: [
         ...initialMessage,
         {
@@ -96,7 +96,7 @@ const getResponse = async (prompt, from) => {
           content: prompt,
         },
       ],
-    });// Create a new conversation
+    }); // Create a new conversation
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
@@ -106,9 +106,9 @@ const getResponse = async (prompt, from) => {
           content: prompt,
         },
       ],
-    });// Get the response from GPT-3
-    newConversation.conversation.push(response.data.choices[0].message);// Push the response from GPT-3
-    await newConversation.save();// Save the conversation
+    }); // Get the response from GPT-3
+    newConversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
+    await newConversation.save(); // Save the conversation
   } else {
     if (conversation.transfer !== true) {
       conversation.conversation.push({ role: "user", content: prompt }); // First push the user message
@@ -116,8 +116,19 @@ const getResponse = async (prompt, from) => {
         model: "gpt-3.5-turbo",
         messages: conversation.conversation,
       }); // Get the response from GPT-3
-      conversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
-      await conversation.save(); // Save the conversation
+      //Check if the response contains any of the keywords
+      if (
+        response.data.choices[0].message.role === "assistant" &&
+        keywords.some((keyword) =>
+          response.data.choices[0].message.content.includes(keyword)
+        )
+      ) {
+        conversation.transfer = true;
+        await conversation.save();
+      } else {
+        conversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
+        await conversation.save(); // Save the conversation
+      }
     } else {
       return;
     }
