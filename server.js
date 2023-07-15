@@ -85,7 +85,7 @@ const initialMessage = [
 const getResponse = async (prompt, from) => {
   let keywords = ["human", "representative", "live"];
 
-  const conversation = await Conversation.findOne({ from });
+  const conversation = await Conversation.findOne({ phonenumber: from });
   if (!conversation) {
     const newConversation = new Conversation({
       phonenumber: from,
@@ -116,15 +116,14 @@ const getResponse = async (prompt, from) => {
         model: "gpt-3.5-turbo",
         messages: conversation.conversation,
       }); // Get the response from GPT-3
-      //Check if the response contains any of the keywords
       if (
         response.data.choices[0].message.role === "assistant" &&
         keywords.some((keyword) =>
           response.data.choices[0].message.content.includes(keyword)
-        )
+        ) // Check if the response contains any of the keywords
       ) {
-        conversation.transfer = true;
-        await conversation.save();
+        conversation.transfer = true; // Set the transfer flag to true
+        await conversation.save(); // Save the conversation
       } else {
         conversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
         await conversation.save(); // Save the conversation
@@ -187,7 +186,7 @@ app.post("/webhook", async (req, res) => {
       if (message.text) {
         let prompt = message.text.body;
         await getResponse(prompt, from);
-        const response = await Conversation.findOne({ from });
+        const response = await Conversation.findOne({ phonenumber: from });
         console.log("Response is: ", response);
         if (response.transfer === true) {
           reply = "Please wait while we transfer you to a human agent.";

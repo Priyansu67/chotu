@@ -10,15 +10,15 @@ const conversationSchema = new mongoose.Schema(
       {
         role: {
           type: String,
-          enum: ["user", "assistant","system"],
+          enum: ["user", "assistant", "system"],
         },
         content: String,
       },
     ],
     transfer: {
-        type: Boolean,
-        default: false
-    }
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
