@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const connectDB = require("./connection/connection.js");
-const { Conversation } = require("./models/userConversationSchema.js");
+const  Conversation = require("./models/userConversationSchema.js");
 connectDB();
 
 const access_token = process.env.ACCESS_TOKEN;
