@@ -111,7 +111,7 @@ const getResponse = async (prompt, from) => {
       .catch((error) => {
         if (error.response) {
           console.log(error.response.status);
-          console.log(error.response.data);
+          console.log(error.response?.data);
         } else {
           console.log(error.message);
         }
@@ -126,12 +126,12 @@ const getResponse = async (prompt, from) => {
       const response = await openai
         .createChatCompletion({
           model: "gpt-3.5-turbo",
-          messages: conversation.conversation,
+          messages: conversation.conversation.map(({ _id, ...rest }) => rest),
         })
         .catch((error) => {
           if (error.response) {
             console.log(error.response.status);
-            console.log(error.response.data);
+            console.log(error.response?.data);
           } else {
             console.log(error.message);
           }
