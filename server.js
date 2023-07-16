@@ -267,6 +267,26 @@ app.post("/webhook", async (req, res) => {
 
 //API Part
 app.get("/api/tickets", getTickets);
+
+app.post("/api/sendMessage/:ticketID",async (req, res) => {
+  try {
+    const { ticketID } = req.params;
+    const { content } = req.body;
+    const ticket = await Ticket.findOne({ ticketID: ticketID });
+    const phone_number_id = ticket.phone_number_id;
+    ticket.conversation.push({
+      role: "support",
+      content: content,
+    });
+    await ticket.save();
+    sendMessage(phone_number_id, ticketID, content);
+    res.status(200).send("Message sent");
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
 app.delete("/api/ticket/resolve/:ticketID", resolveTicket);
 
 app.use(express.static("public"));
