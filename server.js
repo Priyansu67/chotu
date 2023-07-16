@@ -268,11 +268,12 @@ app.post("/webhook", async (req, res) => {
 //API Part
 app.get("/api/tickets", getTickets);
 
-app.post("/api/sendMessage/:ticketID",async (req, res) => {
+app.post("/api/sendMessage/:ticketID", async (req, res) => {
   try {
     const { ticketID } = req.params;
     const { content } = req.body;
     const ticket = await Ticket.findOne({ ticketID: ticketID });
+    await Conversation.findOneAndUpdate({phonenumber: ticketID},{connected: true});
     const phone_number_id = ticket.phone_number_id;
     ticket.conversation.push({
       role: "support",
