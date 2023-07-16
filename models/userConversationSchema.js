@@ -19,6 +19,10 @@ const conversationSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    connected: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
