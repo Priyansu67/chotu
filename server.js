@@ -4,8 +4,8 @@ const path = require("path");
 const axios = require("axios");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const event = require("events");
-const MyEventEmitter = new event.EventEmitter();
+const { EventEmitter } = require("events");
+const eventEmitter = new EventEmitter();
 
 dotenv.config();
 
@@ -229,7 +229,7 @@ app.post("/webhook", async (req, res) => {
         const response = await Conversation.findOne({ phonenumber: from });
         if (response.transfer === true) {
           if (response.connected === true) {
-            MyEventEmitter.emit("sendMessage");
+            eventEmitter.emit("newMessage", prompt);
             const ticket = await Ticket.findOne({ ticketID: from });
             ticket.conversation.push({
               role: "user",
@@ -269,7 +269,35 @@ app.post("/webhook", async (req, res) => {
 });
 
 //API Part
-app.get("/api/tickets", getTickets);
+
+app.get("/api/sse", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
+  // Maintain an array of connected SSE clients
+  const clients = [];
+
+  // Add the current client to the array
+  clients.push(res);
+
+  // Handle SSE connection close event
+  req.on("close", () => {
+    // Remove the client from the array when the connection is closed
+    const index = clients.indexOf(res);
+    if (index > -1) {
+      clients.splice(index, 1);
+    }
+    console.log("SSE connection closed");
+  });
+
+  // Listen for new messages and send them to all connected clients
+  eventEmitter.on("newMessage", (message) => {
+    const eventString = `data: ${JSON.stringify(message)}\n\n`;
+    clients.forEach((client) => client.write(eventString));
+  });
+});
 
 app.post("/api/sendMessage/:ticketID", async (req, res) => {
   try {
@@ -294,6 +322,7 @@ app.post("/api/sendMessage/:ticketID", async (req, res) => {
   }
 });
 
+app.get("/api/tickets", getTickets);
 app.delete("/api/ticket/resolve/:ticketID", resolveTicket);
 
 app.use(express.static("public"));
