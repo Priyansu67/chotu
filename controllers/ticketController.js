@@ -13,7 +13,7 @@ const getTickets = async (req, res) => {
 const resolveTicket = async (req, res) => {
   try {
     const ticketID = req.params.ticketID;
-    const ticket = await Ticket.findOneAndDelete({
+    await Ticket.findOneAndDelete({
       ticketID: ticketID,
     });
     const update = {
@@ -25,17 +25,11 @@ const resolveTicket = async (req, res) => {
       {
         phonenumber: ticketID,
       },
-      update,
-      { new: true }
+      update
     );
 
     res.status(200).json({
       message: "Ticket resolved",
-      ticket: {
-        ticketID: ticket.ticketID,
-        phone_number_id: ticket.phone_number_id,
-        conversation: ticket.conversation.slice(1),//remove the first element
-      },
     });
   } catch (error) {
     res.status(404).json({ message: error.message });

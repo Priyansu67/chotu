@@ -4,6 +4,8 @@ const path = require("path");
 const axios = require("axios");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const event = require("events");
+const MyEventEmitter = new event.EventEmitter();
 
 dotenv.config();
 
@@ -227,6 +229,7 @@ app.post("/webhook", async (req, res) => {
         const response = await Conversation.findOne({ phonenumber: from });
         if (response.transfer === true) {
           if (response.connected === true) {
+            MyEventEmitter.emit("sendMessage");
             const ticket = await Ticket.findOne({ ticketID: from });
             ticket.conversation.push({
               role: "user",
@@ -273,7 +276,10 @@ app.post("/api/sendMessage/:ticketID", async (req, res) => {
     const { ticketID } = req.params;
     const { content } = req.body;
     const ticket = await Ticket.findOne({ ticketID: ticketID });
-    await Conversation.findOneAndUpdate({phonenumber: ticketID},{connected: true});
+    await Conversation.findOneAndUpdate(
+      { phonenumber: ticketID },
+      { connected: true }
+    );
     const phone_number_id = ticket.phone_number_id;
     ticket.conversation.push({
       role: "support",
