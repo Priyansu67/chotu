@@ -276,26 +276,17 @@ app.get("/api/sse", (req, res) => {
   res.setHeader("Connection", "keep-alive");
   res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // Maintain an array of connected SSE clients
-  const clients = [];
-
-  // Add the current client to the array
-  clients.push(res);
-
+  req.on("open", () => {
+    console.log("SSE connection opened");
+  });
   // Handle SSE connection close event
   req.on("close", () => {
-    // Remove the client from the array when the connection is closed
-    const index = clients.indexOf(res);
-    if (index > -1) {
-      clients.splice(index, 1);
-    }
     console.log("SSE connection closed");
   });
 
-  // Listen for new messages and send them to all connected clients
+  // Listen for new messages and notify the SSE clients
   eventEmitter.on("newMessage", (message) => {
-    const eventString = `data: ${JSON.stringify(message)}\n\n`;
-    clients.forEach((client) => client.write(eventString));
+    res.write("New message received: " + message + "\n\n");
   });
 });
 
