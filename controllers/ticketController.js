@@ -13,20 +13,20 @@ const getTickets = async (req, res) => {
 const resolveTicket = async (req, res) => {
   try {
     const ticketID = req.params.ticketID;
+
+    const conversation = await Conversation.findOne({
+      phonenumber: ticketID,
+    });
+
+    conversation.transfer = false;
+    conversation.connected = false;
+    conversation.conversation = conversation.conversation.slice(2);
+
+    await conversation.save();
+
     await Ticket.findOneAndDelete({
       ticketID: ticketID,
     });
-    const update = {
-      $set: { transfer: false, connected: false },
-      $set: { conversation: { $slice: ["$conversation", 2] } },
-    };
-
-    await Conversation.findOneAndUpdate(
-      {
-        phonenumber: ticketID,
-      },
-      update
-    );
 
     res.status(200).json({
       message: "Ticket resolved",
