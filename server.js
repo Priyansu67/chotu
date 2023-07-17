@@ -4,13 +4,21 @@ const path = require("path");
 const axios = require("axios");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const { EventEmitter } = require("events");
-const eventEmitter = new EventEmitter();
-
-dotenv.config();
-
 const app = express();
 app.use(cors());
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  },
+});
+
+io.on("connection", () => {
+  console.log("New client connected");
+});
+
+dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,8 +27,6 @@ connectDB();
 const Conversation = require("./models/userConversationSchema.js");
 const Ticket = require("./models/ticketSchema.js");
 const {
-  getRooms,
-  deleteRoom,
   getTickets,
   resolveTicket,
 } = require("./controllers/ticketController.js");
@@ -229,7 +235,12 @@ app.post("/webhook", async (req, res) => {
         const response = await Conversation.findOne({ phonenumber: from });
         if (response.transfer === true) {
           if (response.connected === true) {
-            eventEmitter.emit("newMessage", prompt);
+            io.emit("messageSent", {
+              message: prompt,
+              role: "user",
+              ticketID: from,
+            });
+
             const ticket = await Ticket.findOne({ ticketID: from });
             ticket.conversation.push({
               role: "user",
@@ -270,26 +281,6 @@ app.post("/webhook", async (req, res) => {
 
 //API Part
 
-app.get("/api/sse", (req, res) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
-  req.on("open", () => {
-    console.log("SSE connection opened");
-  });
-  // Handle SSE connection close event
-  req.on("close", () => {
-    console.log("SSE connection closed");
-  });
-
-  // Listen for new messages and notify the SSE clients
-  eventEmitter.on("newMessage", (message) => {
-    res.write("New message received: " + message + "\n\n");
-  });
-});
-
 app.post("/api/sendMessage/:ticketID", async (req, res) => {
   try {
     const { ticketID } = req.params;
@@ -323,6 +314,6 @@ app.get("^/$", (req, res) => {
   res.sendFile(path.join(__dirname, "dist/index.html"));
 });
 
-app.listen(6000 || process.env.PORT, () =>
+server.listen(6000 || process.env.PORT, () =>
   console.log("Server is running on port " + 6000 || process.env.PORT)
 );
