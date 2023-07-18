@@ -136,7 +136,7 @@ const getResponse = async (prompt, from) => {
           console.log(error.message);
         }
       });
-    console.log(response["usage"]["total_tokens"]);
+    console.log(response.data.usage["total_tokens"]);
     // Get the response from GPT-3
     newConversation.conversation.push(response.data.choices[0].message); // Push the response from GPT-3
     await newConversation.save(); // Save the conversation
@@ -160,7 +160,7 @@ const getResponse = async (prompt, from) => {
             console.log(error.message);
           }
         });
-      console.log(response["usage"]["total_tokens"]);
+      console.log(response.data.usage["total_tokens"]);
       // Get the response from GPT-3
       if (
         response.data.choices[0].message.role === "assistant" &&
