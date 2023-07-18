@@ -18,23 +18,22 @@ const resolveTicket = async (req, res) => {
       phonenumber: ticketID,
     });
 
-    const newConversationList = conversation.conversation.splice(2);
-    console.log(newConversationList);
+    const newConversationList = conversation.conversation.slice(0, 1); //will return a copy of the array from index 0 to 2
+    console.log(
+      "newConversationList: ",
+      newConversationList);
 
     const updatedCOnversation = await conversation.updateOne({
       $set: {
         transfer: false,
-        connected: false      },
-    });
-
-    const updatedConversationList = await conversation.replaceOne({
-      $set: {
+        connected: false,
         conversation: newConversationList,
       },
     });
 
-    console.log(updatedCOnversation);
-    console.log(updatedConversationList);
+    console.log(
+      "updatedCOnversation: ",
+      updatedCOnversation);
 
     await Ticket.findOneAndDelete({
       ticketID: ticketID,
