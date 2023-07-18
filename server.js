@@ -146,7 +146,6 @@ const getResponse = async (prompt, from) => {
       const messagesArray = conversation.conversation.map(
         ({ role, content }) => ({ role, content })
       );
-      console.log(messagesArray);
       const response = await openai
         .createChatCompletion({
           model: "gpt-3.5-turbo",
@@ -212,13 +211,9 @@ const sendMessage = async (phone_number_id, from, reply) => {
       text: { body: reply },
     },
     headers: { "Content-Type": "application/json" },
-  })
-    .then(() => {
-      console.log("Message sent to " + from);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  }).catch((error) => {
+    console.log(error);
+  });
 };
 
 app.post("/webhook", async (req, res) => {
