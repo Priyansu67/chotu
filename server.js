@@ -42,7 +42,7 @@ const openai = new OpenAIApi(configuration);
 const initialMessage = [
   {
     role: "system",
-    content: `You are a funny chatbot who always give witty replies.`,
+    content: `You are a very helpful AI assistant.`,
   },
 ];
 
