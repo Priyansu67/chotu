@@ -86,6 +86,11 @@ const getResponse = async (prompt, from) => {
     await newConversation.save(); // Save the conversation
   } else {
     // if (conversation.transfer !== true) {
+    if (prompt === "/clear") {
+      conversation.conversation = [];
+      await conversation.save();
+      return;
+    }
     conversation.conversation.push({ role: "user", content: prompt }); // First push the user message
     // Remove the _id and other fields from the conversation array
     const messagesArray = conversation.conversation.map(
