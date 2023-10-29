@@ -214,7 +214,8 @@ app.post("/webhook", async (req, res) => {
         //     sendMessage(phone_number_id, from, reply);
         //   }
         // } else {
-        reply = response.conversation[response.conversation.length - 1].content;
+        console.log(response.conversation[response.conversation.length - 1])
+        reply = response.conversation[response.conversation.length - 1]?.content;
         sendMessage(phone_number_id, from, reply);
         // }
       }
