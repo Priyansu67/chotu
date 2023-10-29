@@ -177,6 +177,7 @@ app.post("/webhook", async (req, res) => {
       let { from } = value.messages[0];
       let message = value.messages[0];
       if (message.text) {
+        res.sendStatus(200);
         let prompt = message.text.body;
         await getResponse(prompt, from);
         const response = await Conversation.findOne({ phonenumber: from });
