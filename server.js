@@ -172,12 +172,13 @@ app.post("/webhook", async (req, res) => {
   try {
     let reply = "";
     if (req.body.entry[0].changes[0].value.messages) {
+        res.status(200);
+        res.sendStatus(200);
       let { value } = req.body.entry[0].changes[0];
       let { phone_number_id } = value.metadata;
       let { from } = value.messages[0];
       let message = value.messages[0];
       if (message.text) {
-        res.sendStatus(200);
         let prompt = message.text.body;
         await getResponse(prompt, from);
         const response = await Conversation.findOne({ phonenumber: from });
@@ -220,7 +221,7 @@ app.post("/webhook", async (req, res) => {
         // }
       }
     }
-    res.status(200).send("EVENT_RECEIVED");
+    //res.status(200).send("EVENT_RECEIVED");
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
